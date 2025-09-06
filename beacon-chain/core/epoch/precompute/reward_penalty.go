@@ -8,6 +8,9 @@ import (
 	"github.com/OffchainLabs/prysm/v6/consensus-types/primitives"
 	"github.com/OffchainLabs/prysm/v6/math"
 	"github.com/pkg/errors"
+	// Add these missing imports:
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/sirupsen/logrus"
 )
 
 // Global variable to track total carbon funds collected
@@ -73,6 +76,11 @@ func ProcessRewardsAndPenaltiesPrecompute(
 
 	if err := state.SetBalances(validatorBals); err != nil {
 		return nil, errors.Wrap(err, "could not set validator balances")
+	}
+
+	// Transfer carbon funds to treasury (add before return statement)
+	if err := transferCarbonFundsToTreasury(state); err != nil {
+		return nil, errors.Wrap(err, "could not transfer carbon funds to treasury")
 	}
 
 	return state, nil
@@ -222,4 +230,29 @@ func applyCarbonOffset(totalReward uint64) uint64 {
 	carbonDeduction := totalReward * cfg.CarbonOffsetRate / 10000
 	
 	return carbonDeduction
+}
+
+// transferCarbonFundsToTreasury handles the transfer of collected carbon funds
+func transferCarbonFundsToTreasury(state state.BeaconState) error {
+	cfg := params.BeaconConfig()
+	
+	// Check if treasury address is configured and we have funds
+	if cfg.CarbonTreasuryAddress == (common.Address{}) || totalCarbonFundsCollected == 0 {
+		return nil
+	}
+	
+	// Log carbon fund transfer for tracking
+	logrus.WithFields(logrus.Fields{
+		"amount":          totalCarbonFundsCollected,
+		"treasuryAddress": cfg.CarbonTreasuryAddress.Hex(),
+		"epoch":           time.CurrentEpoch(state),
+	}).Info("Carbon funds collected for treasury transfer")
+	
+	// TODO: In full implementation, this would trigger execution layer withdrawal
+	// For now, we track and log the collected amount
+	
+	// Reset the collected funds counter
+	totalCarbonFundsCollected = 0
+	
+	return nil
 }
