@@ -107,3 +107,11 @@ func (b *BeaconState) HistoricalSummaries() ([]*ethpb.HistoricalSummary, error) 
 func (b *BeaconState) historicalSummariesVal() []*ethpb.HistoricalSummary {
 	return ethpb.CopySlice(b.historicalSummaries)
 }
+
+// CarbonTreasuryBalance returns the current treasury balance for carbon offset funds.
+func (b *BeaconState) CarbonTreasuryBalance() primitives.Gwei {
+	b.lock.RLock()
+	defer b.lock.RUnlock()
+
+	return b.carbonTreasuryBalance
+}

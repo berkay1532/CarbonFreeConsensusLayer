@@ -6,6 +6,7 @@ import (
 
 	fieldparams "github.com/OffchainLabs/prysm/v6/config/fieldparams"
 	"github.com/OffchainLabs/prysm/v6/encoding/bytesutil"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // MainnetConfig returns the configuration to be used in the main network.
@@ -338,6 +339,11 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	AttestationSubnetPrefixBits:     6,
 	SubnetsPerNode:                  2,
 	NodeIdBits:                      256,
+
+	// Carbon Neutrality EIP
+	CarbonOffsetActivationEpoch: 400000, // Planned activation epoch
+	CarbonOffsetRate:           100,     // 1% in basis points (100 = 1%)
+	CarbonTreasuryAddress:      common.HexToAddress("0x1234567890123456789012345678901234567890"), // Placeholder address
 
 	BlobSchedule: []BlobScheduleEntry{},
 }

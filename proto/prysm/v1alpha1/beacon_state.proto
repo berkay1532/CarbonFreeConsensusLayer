@@ -747,4 +747,10 @@ message BeaconStateFulu {
   // Fields introduced in Fulu fork [13001-14000]
   repeated uint64 proposer_lookahead = 13001
       [ (ethereum.eth.ext.ssz_size) = "proposer_lookahead_size" ];
+
+  // Carbon Neutrality EIP fields [14001-15000]
+  uint64 carbon_treasury_balance = 14001 [
+    (ethereum.eth.ext.cast_type) =
+        "github.com/OffchainLabs/prysm/v6/consensus-types/primitives.Gwei"
+  ];
 }

@@ -213,3 +213,13 @@ func (b *BeaconState) addDirtyIndices(index types.FieldIndex, indices []uint64) 
 		b.dirtyIndices[index] = append(b.dirtyIndices[index], indices...)
 	}
 }
+
+// SetCarbonTreasuryBalance sets the carbon treasury balance for the beacon state.
+func (b *BeaconState) SetCarbonTreasuryBalance(val primitives.Gwei) error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+
+	b.carbonTreasuryBalance = val
+	b.markFieldAsDirty(types.CarbonTreasuryBalance)
+	return nil
+}
