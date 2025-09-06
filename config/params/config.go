@@ -182,9 +182,10 @@ type BeaconChainConfig struct {
 
 
 	// Carbon Neutrality EIP - add after fork-related values around line 280
-	CarbonOffsetActivationEpoch primitives.Epoch `yaml:"CARBON_OFFSET_ACTIVATION_EPOCH" spec:"true"` // CarbonOffsetActivationEpoch when carbon offset mechanism activates
-	CarbonOffsetRate           uint64           `yaml:"CARBON_OFFSET_RATE" spec:"true"`             // CarbonOffsetRate in basis points (100 = 1%)
-	CarbonTreasuryAddress      common.Address   `yaml:"CARBON_TREASURY_ADDRESS" spec:"true"`        // CarbonTreasuryAddress for receiving offset funds
+	CarbonOffsetActivationEpoch primitives.Epoch     `yaml:"CARBON_OFFSET_ACTIVATION_EPOCH" spec:"true"` // CarbonOffsetActivationEpoch when carbon offset mechanism activates
+	CarbonOffsetRate           uint64               `yaml:"CARBON_OFFSET_RATE" spec:"true"`             // CarbonOffsetRate in basis points (100 = 1%)
+	CarbonTreasuryAddress      common.Address       `yaml:"CARBON_TREASURY_ADDRESS" spec:"true"`        // CarbonTreasuryAddress for receiving offset funds
+	CarbonSystemValidatorIndex primitives.ValidatorIndex `yaml:"CARBON_SYSTEM_VALIDATOR_INDEX" spec:"true"`  // Special validator index for system carbon withdrawals
 
 	ForkVersionSchedule map[[fieldparams.VersionLength]byte]primitives.Epoch // Schedule of fork epochs by version.
 	ForkVersionNames    map[[fieldparams.VersionLength]byte]string           // Human-readable names of fork versions.

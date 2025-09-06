@@ -49,14 +49,17 @@ func TestProcessRewardsAndPenaltiesPrecompute(t *testing.T) {
 	originalRate := params.BeaconConfig().CarbonOffsetRate
 	originalAddress := params.BeaconConfig().CarbonTreasuryAddress
 	originalActivationEpoch := params.BeaconConfig().CarbonOffsetActivationEpoch
+	originalSystemValidatorIndex := params.BeaconConfig().CarbonSystemValidatorIndex
 	params.BeaconConfig().CarbonOffsetRate = 100 // 1%
 	params.BeaconConfig().CarbonTreasuryAddress = common.HexToAddress("0x1234567890123456789012345678901234567890")
 	params.BeaconConfig().CarbonOffsetActivationEpoch = 0 // Activate from epoch 0
+	params.BeaconConfig().CarbonSystemValidatorIndex = 0xFFFFFFFF // Special system validator index
 	
 	defer func() {
 		params.BeaconConfig().CarbonOffsetRate = originalRate
 		params.BeaconConfig().CarbonTreasuryAddress = originalAddress
 		params.BeaconConfig().CarbonOffsetActivationEpoch = originalActivationEpoch
+		params.BeaconConfig().CarbonSystemValidatorIndex = originalSystemValidatorIndex
 	}()
 
 	processedState, err := ProcessRewardsAndPenaltiesPrecompute(beaconState, bp, vp, AttestationsDelta, ProposersDelta)
