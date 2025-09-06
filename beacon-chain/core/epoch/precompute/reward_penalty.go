@@ -10,6 +10,9 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Global variable to track total carbon funds collected
+var totalCarbonFundsCollected uint64
+
 type attesterRewardsFunc func(state.ReadOnlyBeaconState, *Balance, []*Validator) ([]uint64, []uint64, error)
 type proposerRewardsFunc func(state.ReadOnlyBeaconState, *Balance, []*Validator) ([]uint64, error)
 
@@ -52,6 +55,18 @@ func ProcessRewardsAndPenaltiesPrecompute(
 			return nil, err
 		}
 		validatorBals[i] = helpers.DecreaseBalanceWithVal(validatorBals[i], attsPenalties[i])
+
+		// NEW: Apply carbon offset deduction
+		if params.BeaconConfig().CarbonOffsetActivationEpoch <= time.CurrentEpoch(state) {
+			
+			// TODO: Add carbon deduction to treasury (will implement in treasury logic
+			carbonDeduction := applyCarbonOffset(attsRewards[i] + proposerRewards[i])
+			if carbonDeduction > 0 {
+				validatorBals[i] = helpers.DecreaseBalanceWithVal(validatorBals[i], carbonDeduction)
+				totalCarbonFundsCollected += carbonDeduction
+			}
+		}
+
 
 		vp[i].AfterEpochTransitionBalance = validatorBals[i]
 	}
@@ -191,4 +206,20 @@ func ProposersDelta(state state.ReadOnlyBeaconState, pBal *Balance, vp []*Valida
 // if is_active_validator(v, previous_epoch) or (v.slashed and previous_epoch + 1 < v.withdrawable_epoch)
 func EligibleForRewards(v *Validator) bool {
 	return v.IsActivePrevEpoch || (v.IsSlashed && !v.IsWithdrawableCurrentEpoch)
+}
+
+// applyCarbonOffset calculates the carbon offset deduction for a given reward amount.
+// Returns the amount to be deducted from validator rewards for carbon offset.
+func applyCarbonOffset(totalReward uint64) uint64 {
+	cfg := params.BeaconConfig()
+	
+	// If carbon offset rate is 0, no deduction
+	if cfg.CarbonOffsetRate == 0 {
+		return 0
+	}
+	
+	// Calculate carbon deduction: totalReward * rate / 10000 (basis points)
+	carbonDeduction := totalReward * cfg.CarbonOffsetRate / 10000
+	
+	return carbonDeduction
 }

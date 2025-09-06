@@ -291,3 +291,58 @@ func baseReward(state state.ReadOnlyBeaconState, index primitives.ValidatorIndex
 		math.IntegerSquareRoot(totalBalance) / params.BeaconConfig().BaseRewardsPerEpoch
 	return baseReward, nil
 }
+
+func TestApplyCarbonOffset(t *testing.T) {
+	tests := []struct {
+		name           string
+		reward         uint64
+		carbonRate     uint64
+		expectedDeduction uint64
+	}{
+		{
+			name:              "1% carbon offset on 1 ETH reward",
+			reward:            1000000000, // 1 ETH in Gwei
+			carbonRate:        100,        // 1% in basis points
+			expectedDeduction: 10000000,   // 0.01 ETH in Gwei
+		},
+		{
+			name:              "0.5% carbon offset on 0.5 ETH reward",
+			reward:            500000000,  // 0.5 ETH in Gwei
+			carbonRate:        50,         // 0.5% in basis points
+			expectedDeduction: 2500000,    // 0.0025 ETH in Gwei
+		},
+		{
+			name:              "Zero carbon rate",
+			reward:            1000000000, // 1 ETH in Gwei
+			carbonRate:        0,          // 0% rate
+			expectedDeduction: 0,          // No deduction
+		},
+		{
+			name:              "Zero reward",
+			reward:            0,
+			carbonRate:        100,
+			expectedDeduction: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Store original carbon rate
+			originalRate := params.BeaconConfig().CarbonOffsetRate
+			
+			// Set test carbon rate
+			params.BeaconConfig().CarbonOffsetRate = tt.carbonRate
+			
+			// Test carbon offset calculation
+			result := applyCarbonOffset(tt.reward)
+			
+			// Verify result
+			if result != tt.expectedDeduction {
+				t.Errorf("applyCarbonOffset() = %v, want %v", result, tt.expectedDeduction)
+			}
+			
+			// Restore original rate
+			params.BeaconConfig().CarbonOffsetRate = originalRate
+		})
+	}
+}

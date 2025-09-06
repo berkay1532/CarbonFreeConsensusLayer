@@ -180,6 +180,12 @@ type BeaconChainConfig struct {
 	FuluForkVersion      []byte           `yaml:"FULU_FORK_VERSION" spec:"true"`      // FuluForkVersion is used to represent the fork version for fulu.
 	FuluForkEpoch        primitives.Epoch `yaml:"FULU_FORK_EPOCH" spec:"true"`        // FuluForkEpoch is used to represent the assigned fork epoch for fulu.
 
+
+	// Carbon Neutrality EIP - add after fork-related values around line 280
+	CarbonOffsetActivationEpoch primitives.Epoch `yaml:"CARBON_OFFSET_ACTIVATION_EPOCH" spec:"true"` // CarbonOffsetActivationEpoch when carbon offset mechanism activates
+	CarbonOffsetRate           uint64           `yaml:"CARBON_OFFSET_RATE" spec:"true"`             // CarbonOffsetRate in basis points (100 = 1%)
+	CarbonTreasuryAddress      common.Address   `yaml:"CARBON_TREASURY_ADDRESS" spec:"true"`        // CarbonTreasuryAddress for receiving offset funds
+
 	ForkVersionSchedule map[[fieldparams.VersionLength]byte]primitives.Epoch // Schedule of fork epochs by version.
 	ForkVersionNames    map[[fieldparams.VersionLength]byte]string           // Human-readable names of fork versions.
 
