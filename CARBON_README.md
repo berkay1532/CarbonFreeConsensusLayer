@@ -7,7 +7,6 @@ This repository implements the **consensus layer** component of a carbon-neutral
 ## 🎯 What This Does
 
 The consensus layer automatically:
-
 - **Deducts 1% carbon offset** from all validator rewards and penalties
 - **Accumulates carbon funds** in a treasury tracking system
 - **Creates carbon withdrawals** that are sent to the execution layer
@@ -40,20 +39,17 @@ The consensus layer automatically:
 ### Installation
 
 1. **Clone the repository**
-
    ```bash
    git clone <your-carbon-free-consensus-repo>
    cd CarbonFreeConsensys
    ```
 
 2. **Build the Beacon Chain**
-
    ```bash
    go build -o build/beacon-chain ./cmd/beacon-chain
    ```
 
 3. **Build the Validator Client**
-
    ```bash
    go build -o build/validator ./cmd/validator
    ```
@@ -74,7 +70,7 @@ Test the carbon offset and withdrawal functionality:
 # Test carbon offset calculation
 go test -v ./beacon-chain/core/epoch/precompute -run TestCarbon
 
-# Test all carbon-related functionality
+# Test all carbon-related functionality  
 go test -v ./beacon-chain/core/epoch/precompute -run Test
 ```
 
@@ -102,14 +98,14 @@ Treasury Balance: 0 → 5096 Gwei
 // Apply 1% carbon offset to validator rewards
 func applyCarbonOffset(totalReward uint64) uint64 {
     cfg := params.BeaconConfig()
-
+    
     if cfg.CarbonOffsetRate == 0 {
         return 0
     }
-
+    
     // Calculate carbon deduction: totalReward * rate / 10000 (basis points)
     carbonDeduction := totalReward * cfg.CarbonOffsetRate / 10000
-
+    
     return carbonDeduction
 }
 ```
@@ -125,7 +121,7 @@ func createCarbonWithdrawal(state state.BeaconState, treasuryAddress common.Addr
         Address:        treasuryAddress.Bytes(),
         Amount:         amount, // Amount in Gwei
     }
-
+    
     // Send to execution layer for processing
     return storeCarbonWithdrawal(state, withdrawal)
 }
@@ -139,7 +135,7 @@ func ProcessRewardsAndPenaltiesPrecompute(state, pBal, vp, ...) {
     for i := 0; i < numOfVals; i++ {
         // Calculate normal rewards
         rewards := attsRewards[i] + proposerRewards[i]
-
+        
         // Apply carbon offset deduction
         if params.BeaconConfig().CarbonOffsetActivationEpoch <= time.CurrentEpoch(state) {
             carbonDeduction := applyCarbonOffset(rewards)
@@ -149,7 +145,7 @@ func ProcessRewardsAndPenaltiesPrecompute(state, pBal, vp, ...) {
             }
         }
     }
-
+    
     // Transfer carbon funds to treasury
     return transferCarbonFundsToTreasury(state)
 }
@@ -186,12 +182,11 @@ CarbonSystemValidatorIndex: 0xFFFFFFFF
 This consensus layer works with the **CarbonNeutralityEIP** execution layer:
 
 1. **Consensus Layer** (this repo):
-
    - Collects carbon offset from validator rewards
    - Creates carbon withdrawals with special validator index
    - Sends withdrawals to execution layer via Engine API
 
-2. **Execution Layer**:
+2. **Execution Layer**: 
    - Receives carbon withdrawals from consensus layer
    - Processes them as special system transactions
    - Transfers funds to treasury addresses
@@ -227,7 +222,6 @@ CARBON WITHDRAWAL CREATED: Index=0, ValidatorIndex=4294967295, Amount=5096 Gwei
 ### State Tracking
 
 The beacon state tracks:
-
 - `CarbonTreasuryBalance()`: Total carbon funds collected
 - `SetCarbonTreasuryBalance()`: Update treasury balance
 - Carbon withdrawal counter for unique withdrawal indices
@@ -258,7 +252,6 @@ The beacon state tracks:
 ### Network Configuration
 
 Ensure your `genesis.ssz` includes:
-
 - Carbon system activation epoch
 - Treasury address configuration
 - Compatible execution layer setup
@@ -274,7 +267,6 @@ Ensure your `genesis.ssz` includes:
 ### Customizable Rates
 
 The system supports configurable offset rates:
-
 - `50 basis points` = 0.5%
 - `100 basis points` = 1.0% (default)
 - `200 basis points` = 2.0%
@@ -318,8 +310,7 @@ A: Check the test outputs, beacon chain logs, and treasury address balance.
 ## 🆘 Support
 
 For issues and questions:
-
-- Create an issue in this repository
+- Create an issue in this repository  
 - Check the test outputs for debugging
 - Review the execution layer repository for the complete carbon system
 - Run `go test -v` to verify functionality

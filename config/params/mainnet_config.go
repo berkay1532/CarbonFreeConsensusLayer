@@ -341,7 +341,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	NodeIdBits:                      256,
 
 	// Carbon Neutrality EIP
-	CarbonOffsetActivationEpoch: 400000,                                                           // Planned activation epoch
+	CarbonOffsetActivationEpoch: 0,                                                                // Test activation epoch (changed from 400000)
 	CarbonOffsetRate:           100,                                                               // 1% in basis points (100 = 1%)
 	CarbonTreasuryAddress:      common.HexToAddress("0x1234567890123456789012345678901234567890"), // Placeholder address
 	CarbonSystemValidatorIndex: 0xFFFFFFFF,                                                        // Special validator index for system withdrawals (max uint32)
