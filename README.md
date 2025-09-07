@@ -42,8 +42,9 @@ The consensus layer automatically:
 1. **Clone the repository**
 
    ```bash
-   git clone <your-carbon-free-consensus-repo>
-   cd CarbonFreeConsensys
+   git clone https://github.com/berkay1532/CarbonFreeConsensusLayer.git
+   cd CarbonFreeConsensusLayer
+   git checkout eip-carbon-neutral
    ```
 
 2. **Build the Beacon Chain**
